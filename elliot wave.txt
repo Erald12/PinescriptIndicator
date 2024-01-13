@@ -1,0 +1,49 @@
+//@version=5
+//@author Koryu
+indicator(title="Eralds BTC.D Elliott Wave Oscillator", shorttitle="EWO")
+
+// Define the symbol you want to correlate with DXY
+Symbol = input("CRYPTOCAP:BTC.D", title="Symbol to Correlate")
+
+Symbol2 = input("CRYPTOCAP:TOTAL3", title="Symbol to Correlate")
+
+src = request.security(Symbol, timeframe.period, expression=close)
+sma1length = input(5, title="SMA1 Length")
+sma2length = input(35, title="SMA2 Length")
+UsePercent = input(true, title="Show Dif as percent of current Candle") 
+smadif = UsePercent ? (ta.sma(src, sma1length) - ta.sma(src, sma2length)) / src * 100 : ta.sma(src, sma1length) - ta.sma(src, sma2length)
+col = smadif <= 0 ? color.red : color.green
+//plot(smadif, color=col, linewidth=2, style=plot.style_histogram)
+
+// Bullish and Bearish signals
+bearishSignal = smadif > 0 and smadif[0] < smadif[1]
+bullishSignal = smadif < 0 and smadif[0] > smadif[1]
+
+// Plot signals
+//plotshape(series=bullishSignal, title="Bullish Signal", color=color.green, style=shape.circle, location=location.belowbar, size=size.small)
+//plotshape(series=bearishSignal, title="Bearish Signal", color=color.red, style=shape.circle, location=location.belowbar, size=size.small)
+
+
+src1 = input(close, title="source")
+sma1length1 = input(5)
+sma2length1 = input(35)
+UsePercent1 = input.bool(true, "Show Dif as percent of current Candle") 
+smadif1= UsePercent1 ? (ta.sma(src1, sma1length1) - ta.sma(src1, sma2length1)) / src1 * 100 : ta.sma(src1, sma1length1) - ta.sma(src1, sma2length1)
+col1=smadif1 <= 0 ? color.red : color.green
+plot(smadif1, color=col1, linewidth=2, style=plot.style_histogram)
+
+src2 = request.security(Symbol2, timeframe.period, expression=close)
+sma1length2 = input(5, title="SMA1 Length")
+sma2length2 = input(35, title="SMA2 Length")
+UsePercent2 = input(true, title="Show Dif as percent of current Candle") 
+smadif2 = UsePercent2 ? (ta.sma(src2, sma1length2) - ta.sma(src2, sma2length2)) / src * 100 : ta.sma(src2, sma1length2) - ta.sma(src2, sma2length2)
+col2 = smadif2 <= 0 ? color.yellow : color.blue
+//plot(smadif2, color=col2, linewidth=2, style=plot.style_histogram)
+
+// Bullish and Bearish signals
+bearishSignal2 = (smadif2 < 0 and smadif2[0] > smadif2[1]) and (smadif > 0 and smadif[0] < smadif[1]) or ((smadif2 > 0 and smadif2[0] > smadif2[1]) and (smadif > 0 and smadif[0] < smadif[1])) or ((smadif2[1] < 0 and smadif2[0]>0 and smadif2[0] > smadif2[1]) and (smadif > 0 and smadif[0] < smadif[1])) //buy
+bullishSignal2 = (smadif2 > 0 and smadif2[0] < smadif2[1]) and (smadif > 0 and smadif[0] < smadif[1]) or (smadif2 < 0 and smadif2[0] < smadif2[1]) and (smadif > 0 and smadif[0] < smadif[1]) or (smadif2[1] > 0 and smadif2[0] < 0 and smadif2[0] < smadif2[1]) and (smadif > 0 and smadif[0] < smadif[1]) //sell
+
+// Plot signals
+plotshape(series=bullishSignal2, title="Bullish Signal", color=color.red, style=shape.circle, location=location.belowbar, size=size.small)
+plotshape(series=bearishSignal2, title="Bearish Signal", color=color.green, style=shape.circle, location=location.belowbar, size=size.small)
